@@ -1,0 +1,5 @@
+<span class="badge">
+  <span v-if="qty === 0" class="badge-danger">⛔ Kosong</span>
+  <span v-else-if="qty < safety" class="badge-warn">⚠️ Menipis</span>
+  <span v-else class="badge-ok">✅ Aman</span>
+</span>

@@ -1,0 +1,52 @@
+<div class="card narrow">
+  <h2>Pemesanan Bahan Ajar (Input Delivery Order)</h2>
+
+  <div class="form-grid" @keyup.enter="submit">
+    <label>Nomor DO (otomatis)
+      <input :value="nomorDO" readonly class="readonly">
+    </label>
+    <label>Tanggal Kirim
+      <input type="date" v-model="form.tanggal">
+      <small class="muted">{{ form.tanggal | tanggalIndo }}</small>
+      <small class="err" v-if="errors.tanggal">{{ errors.tanggal }}</small>
+    </label>
+    <label>NIM
+      <input v-model="form.nim" inputmode="numeric" maxlength="15" placeholder="mis. 123456789">
+      <small class="err" v-if="errors.nim">{{ errors.nim }}</small>
+    </label>
+    <label>Nama
+      <input v-model.trim="form.nama" placeholder="Nama mahasiswa">
+      <small class="err" v-if="errors.nama">{{ errors.nama }}</small>
+    </label>
+    <label>Ekspedisi
+      <select v-model="form.ekspedisi">
+        <option value="">-- pilih ekspedisi --</option>
+        <option v-for="e in ekspedisi" :key="e.kode" :value="e.kode">JNE {{ e.nama }}</option>
+      </select>
+      <small class="err" v-if="errors.ekspedisi">{{ errors.ekspedisi }}</small>
+    </label>
+    <label>Paket Bahan Ajar
+      <select v-model="form.paketKode">
+        <option value="">-- pilih paket --</option>
+        <option v-for="p in paket" :key="p.kode" :value="p.kode">{{ p.kode }} - {{ p.nama }}</option>
+      </select>
+      <small class="err" v-if="errors.paketKode">{{ errors.paketKode }}</small>
+    </label>
+
+    <div class="full paket-detail" v-if="selectedPaket">
+      <strong>Isi {{ selectedPaket.nama }}:</strong>
+      <ul>
+        <li v-for="(it, i) in isiPaket" :key="it.kode">{{ i + 1 }}. {{ it.kode }} - {{ it.judul }}</li>
+      </ul>
+    </div>
+
+    <label class="full">Total Harga
+      <input :value="total | rupiah" readonly class="readonly">
+    </label>
+  </div>
+
+  <div class="actions">
+    <button class="btn" @click="reset">Reset</button>
+    <button class="btn primary" @click="submit">Buat Delivery Order</button>
+  </div>
+</div>

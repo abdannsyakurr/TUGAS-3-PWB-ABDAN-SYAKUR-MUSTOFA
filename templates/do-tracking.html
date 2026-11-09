@@ -1,0 +1,50 @@
+<div class="card">
+  <h2>Tracking Delivery Order</h2>
+
+  <div class="filters">
+    <label>Cari berdasarkan
+      <select v-model="mode">
+        <option value="no">Nomor DO</option>
+        <option value="nim">NIM</option>
+      </select>
+    </label>
+    <label class="grow">Kata kunci
+      <input v-model="query" @keyup.enter="doSearch" @keyup.esc="resetSearch"
+             :placeholder="mode === 'no' ? 'mis. DO2025-0001' : 'mis. 123456789'">
+    </label>
+    <button class="btn primary" @click="doSearch">🔍 Cari</button>
+    <button class="btn" @click="resetSearch">Reset</button>
+  </div>
+  <p class="muted">Tekan <kbd>Enter</kbd> untuk mencari, <kbd>Esc</kbd> untuk mengosongkan.</p>
+
+  <div v-if="results.length === 0" class="empty">Data DO tidak ditemukan.</div>
+
+  <div class="do-card" v-for="(d, index) in results" :key="d.no">
+    <div class="do-head">
+      <h3>{{ d.no }}</h3>
+      <span class="status-pill" :class="statusClass(d.status)">{{ d.status }}</span>
+    </div>
+
+    <dl class="detail">
+      <template v-for="(val, key) in ringkasan(d)">
+        <dt :key="'t' + key">{{ key }}</dt>
+        <dd :key="'d' + key">{{ val }}</dd>
+      </template>
+    </dl>
+
+    <h4>Perjalanan</h4>
+    <ul class="timeline">
+      <li v-for="(p, i) in d.perjalanan" :key="i">
+        <span class="time">{{ p.waktu }}</span>
+        <span>{{ p.keterangan }}</span>
+      </li>
+    </ul>
+
+    <div class="add-progress">
+      <input :value="drafts[d.no] || ''" @input="setDraft(d.no, $event.target.value)"
+             @keyup.enter="addProgress(d)" placeholder="Tambah keterangan progress, lalu Enter">
+      <button class="btn" @click="addProgress(d)">＋ Tambah</button>
+      <small class="err" v-if="errors[d.no]">{{ errors[d.no] }}</small>
+    </div>
+  </div>
+</div>
