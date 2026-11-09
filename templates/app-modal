@@ -1,0 +1,11 @@
+<transition name="fade">
+  <div class="modal-backdrop" v-if="show" @click.self="$emit('close')">
+    <div class="modal" role="dialog">
+      <header class="modal-head">
+        <h3>{{ title }}</h3>
+        <button class="icon-btn" @click="$emit('close')" title="Tutup">✕</button>
+      </header>
+      <div class="modal-body"><slot></slot></div>
+    </div>
+  </div>
+</transition>
