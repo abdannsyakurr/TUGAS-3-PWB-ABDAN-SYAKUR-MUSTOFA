@@ -1,0 +1,48 @@
+// Data service: semua akses data (fetch JSON & template) lewat sini
+window.Api = {
+  // peta nama file template -> id template
+  templates: {
+    'stock-table': 'tpl-stock',
+    'do-tracking': 'tpl-tracking',
+    'order-form': 'tpl-order',
+    'status-badge': 'tpl-badge',
+    'app-modal': 'tpl-modal'
+  },
+
+  async loadTemplates() {
+    const names = Object.keys(this.templates);
+    const texts = await Promise.all(names.map(async n => {
+      const res = await fetch('templates/' + n + '.html');
+      if (!res.ok) throw new Error('Gagal memuat template ' + n);
+      return res.text();
+    }));
+    names.forEach((n, i) => {
+      const t = document.createElement('template');
+      t.id = this.templates[n];
+      t.innerHTML = texts[i];
+      document.body.appendChild(t);
+    });
+  },
+
+  async loadAll() {
+    const res = await fetch('data/dataBahanAjar.json');
+    if (!res.ok) throw new Error('Gagal memuat dataBahanAjar.json');
+    const raw = await res.json();
+    // tracking di JSON berbentuk [{ "DO..": {...} }, ...] -> diratakan & dihapus duplikatnya
+    const seen = {};
+    const tracking = [];
+    (raw.tracking || []).forEach(obj => {
+      Object.keys(obj).forEach(no => {
+        if (!seen[no]) { seen[no] = true; tracking.push(Object.assign({ no: no }, obj[no])); }
+      });
+    });
+    return {
+      upbjjList: raw.upbjjList,
+      kategoriList: raw.kategoriList,
+      pengirimanList: raw.pengirimanList,
+      paket: raw.paket,
+      stok: raw.stok,
+      tracking: tracking
+    };
+  }
+};
