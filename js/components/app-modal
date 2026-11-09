@@ -1,0 +1,9 @@
+Vue.component('app-modal', {
+  template: '#tpl-modal',
+  props: { show: Boolean, title: String },
+  mounted() { document.addEventListener('keydown', this.onKey); },
+  beforeDestroy() { document.removeEventListener('keydown', this.onKey); },
+  methods: {
+    onKey(e) { if (e.key === 'Escape' && this.show) this.$emit('close'); }
+  }
+});
