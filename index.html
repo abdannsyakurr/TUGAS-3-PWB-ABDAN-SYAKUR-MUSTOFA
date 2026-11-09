@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SITTA - Pemesanan Bahan Ajar UT</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="app" v-cloak>
+    <header class="topbar">
+      <h1>📚 SITTA <small>Bahan Ajar UT</small></h1>
+      <nav>
+        <button :class="{active: tab==='stok'}" @click="tab='stok'">Stok</button>
+        <button :class="{active: tab==='tracking'}" @click="tab='tracking'">Tracking DO</button>
+        <button :class="{active: tab==='order'}" @click="tab='order'">Pemesanan</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section v-show="tab==='stok'">
+        <ba-stock-table :items="state.stok"
+                        :upbjj-list="state.upbjjList"
+                        :kategori-list="state.kategoriList"
+                        @create="addStok" @update="updateStok" @delete="deleteStok"></ba-stock-table>
+      </section>
+      <section v-show="tab==='tracking'">
+        <do-tracking :items="state.tracking" :paket="state.paket"
+                     @add-progress="addProgress"></do-tracking>
+      </section>
+      <section v-show="tab==='order'">
+        <order-form :paket="state.paket" :ekspedisi="state.pengirimanList"
+                    :stok="state.stok" :tracking="state.tracking"
+                    @created="handleNewDO"></order-form>
+      </section>
+    </main>
+
+    <transition name="fade"><div class="toast" v-if="toast">{{ toast }}</div></transition>
+    <app-modal :show="infoModal" title="Informasi" @close="infoModal=false">
+      <p>{{ infoText }}</p>
+      <div class="actions"><button class="btn primary" @click="infoModal=false">OK</button></div>
+    </app-modal>
+  </div>
+
+  <!-- Template dimuat otomatis dari folder /templates oleh app.js (id: tpl-stock, tpl-tracking, tpl-order, tpl-badge, tpl-modal) -->
+
+  <!-- Scripts (urutan penting) -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="js/services/api.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/components/status-badge.js"></script>
+  <script src="js/components/app-modal.js"></script>
+  <script src="js/components/stock-table.js"></script>
+  <script src="js/components/do-tracking.js"></script>
+  <script src="js/components/order-form.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
